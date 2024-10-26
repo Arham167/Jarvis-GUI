@@ -44,33 +44,66 @@ canvas.pack(side = "bottom")
 canvas.create_image(1, 1, anchor = NW, image = img)
 
 def main():
+    global user_area
+    global pwd_area
     canvas.create_text(w/1.95, h/5, 
                        text = "Enter Username & Password", 
                        font = ("Lucida Fax", int(w/38)),
                        fill = "white")
-    user_area = Entry(canvas,
+    user_area = Text(canvas,
+                     height = 1,
+                     width = int(w/70),
                     font = ("Lucida Fax", int(w/38)))
     user_area.place(x = int (w/3.5), y = int(h/3))
-    username = user_area.get()
-    pwd_area = Entry(canvas,
+    pwd_area = Text(canvas,
+                    height = 1,
+                    width = int(w/70),
                     font = ("Lucida Fax", int(w/38)))
     pwd_area.place(x = int (w/3.5), y = int(h/2))
-    pwd = pwd_area.get()
     bt1 = Button(canvas,
                  text = "Sign In",
                  font = ("Arial Greek", int(w/80)),
                  cursor = "mouse",
-                 command = partial(user_auth, username, pwd))
-    bt1.place(x = int (w/3.5), y = int(h/1.5))
+                 command = user_auth)
+    bt1.place(x = int (w/3), y = int(h/1.5))
+    bt2 = Button(canvas,
+                 text = "New? Sign Up",
+                 font = ("Arial Greek", int(w/80)),
+                 cursor = "mouse",
+                 command = user_add)
+    bt2.place(x = int (w/1.7), y = int(h/1.5))
     
     root.mainloop()
 
-def user_auth(username, pwd):
-    print(users.auth_users)
-    if username and pwd in users.auth_users:
+def user_auth():
+    username = user_area.get("1.0", "end-1c")
+    print(username)
+    pwd = pwd_area.get("1.0", "end-1c")
+    print(pwd)
+
+    if username in users.auth_users:
         print("ok")
+        if pwd == users.auth_users.get(username):
+            print("ok")
+        else:
+            print("wrong pwd")
     else:
-        print("no")
+        print("wrong username")
+
+def user_add():
+    new_win = Toplevel()
+    new_win.geometry("%dx%d+%d+%d" % (w/3, h/1.5, w/3, h/6))
+    
+    user_area = Text(new_win,
+                     height = 1,
+                     width = int(w/180),
+                    font = ("Lucida Fax", int(w/38)))
+    user_area.place(x = int (w/10), y = int(h/10))
+    pwd_area = Text(new_win,
+                    height = 1,
+                    width = int(w/180),
+                    font = ("Lucida Fax", int(w/38)))
+    pwd_area.place(x = int (w/10), y = int(h/9))
 
 if __name__ == "__main__":
     main()
