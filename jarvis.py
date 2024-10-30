@@ -1,4 +1,4 @@
-import PIL, requests, users
+import PIL, requests, users, shelves
 from tkinter import *
 from PIL import ImageTk, Image
 from io import BytesIO
@@ -30,6 +30,14 @@ closebutton = Button(title_bar,
                      width = 4,
                      command= root.quit)
 closebutton.place(x = int(w/1.03), y = int(w/270))
+minbutton = Button(title_bar,
+                     text = "-",
+                     bg = "snow", fg = "black",
+                     cursor = "mouse",
+                     relief = "flat",
+                     width = 4,
+                     command= root.withdraw)
+minbutton.place(x = int(w/5), y = int(w/270))
 
 
 # Open the image, resize it and display it
@@ -70,7 +78,7 @@ def main():
                  text = "New? Sign Up",
                  font = ("Arial Greek", int(w/80)),
                  cursor = "mouse",
-                 command = user_add)
+                 command = user_ask)
     bt2.place(x = int (w/1.7), y = int(h/1.5))
     
     root.mainloop()
@@ -90,20 +98,49 @@ def user_auth():
     else:
         print("wrong username")
 
-def user_add():
+def user_ask():
     new_win = Toplevel()
-    new_win.geometry("%dx%d+%d+%d" % (w/3, h/1.5, w/3, h/6))
-    
-    user_area = Text(new_win,
+    new_win.geometry("%dx%d+%d+%d" % (w/2.5, h/1.5, w/3.2, h/6))
+    global newuser_area
+    global newpwd_area
+
+    newuser_label = Label(new_win,
+                       text = "Username: ",
+                       font = ("Lucida Fax", int(w/38)))
+    newuser_label.place(x = int(w/80), y = int(h/6))
+    newuser_area = Text(new_win,
                      height = 1,
                      width = int(w/180),
                     font = ("Lucida Fax", int(w/38)))
-    user_area.place(x = int (w/10), y = int(h/10))
-    pwd_area = Text(new_win,
+    newuser_area.place(x = int (w/4.8), y = int(h/6))
+    newpwd_label = Label(new_win,
+                       text = "Password: ",
+                       font = ("Lucida Fax", int(w/38)))
+    newpwd_label.place(x = int(w/80), y = int(h/3))
+    newpwd_area = Text(new_win,
                     height = 1,
                     width = int(w/180),
                     font = ("Lucida Fax", int(w/38)))
-    pwd_area.place(x = int (w/10), y = int(h/9))
+    newpwd_area.place(x = int (w/4.8), y = int(h/3))
+
+    bt1 = Button(new_win,
+                 text = "Enter",
+                 font = ("Arial Greek", int(w/80)),
+                 cursor = "mouse",
+                 command = user_add)
+    bt1.place(x = int (w/6), y = int(h/2))
+
+def user_add():
+    username = newuser_area.get("1.0", "end-1c")
+    pwd = newpwd_area.get("1.0", "end-1c")
+    print(users.auth_users)
+
+    if username or pwd not in users.auth_users:
+        key = username
+        value = pwd
+        users.auth_users.update({key: value})
+
+    print(users.auth_users)
 
 if __name__ == "__main__":
     main()
