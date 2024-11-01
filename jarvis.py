@@ -1,4 +1,4 @@
-import PIL, requests, users, shelves
+import PIL, requests, shelve
 from tkinter import *
 from PIL import ImageTk, Image
 from io import BytesIO
@@ -20,7 +20,7 @@ title_bar.pack(fill = "x")
 title_label = Label(title_bar, 
                     text = "J.A.R.V.I.S.", 
                     bg = "black", fg = "white",
-                    font = ("Lucida Fax", 20))
+                    font = ("Tahoma", 20))
 title_label.pack()
 closebutton = Button(title_bar,
                      text = "X",
@@ -30,14 +30,6 @@ closebutton = Button(title_bar,
                      width = 4,
                      command= root.quit)
 closebutton.place(x = int(w/1.03), y = int(w/270))
-minbutton = Button(title_bar,
-                     text = "-",
-                     bg = "snow", fg = "black",
-                     cursor = "mouse",
-                     relief = "flat",
-                     width = 4,
-                     command= root.withdraw)
-minbutton.place(x = int(w/5), y = int(w/270))
 
 
 # Open the image, resize it and display it
@@ -56,24 +48,24 @@ def main():
     global pwd_area
     canvas.create_text(w/1.95, h/5, 
                        text = "Enter Username & Password", 
-                       font = ("Lucida Fax", int(w/38)),
+                       font = ("Tahoma", int(w/38)),
                        fill = "white")
     user_area = Text(canvas,
                      height = 1,
                      width = int(w/70),
-                    font = ("Lucida Fax", int(w/38)))
-    user_area.place(x = int (w/3.5), y = int(h/3))
+                    font = ("Tahoma", int(w/38)))
+    user_area.place(x = int (w/3.2), y = int(h/3))
     pwd_area = Text(canvas,
                     height = 1,
                     width = int(w/70),
-                    font = ("Lucida Fax", int(w/38)))
-    pwd_area.place(x = int (w/3.5), y = int(h/2))
+                    font = ("Tahoma", int(w/38)))
+    pwd_area.place(x = int (w/3.2), y = int(h/2))
     bt1 = Button(canvas,
                  text = "Sign In",
                  font = ("Arial Greek", int(w/80)),
                  cursor = "mouse",
                  command = user_auth)
-    bt1.place(x = int (w/3), y = int(h/1.5))
+    bt1.place(x = int (w/3.2), y = int(h/1.5))
     bt2 = Button(canvas,
                  text = "New? Sign Up",
                  font = ("Arial Greek", int(w/80)),
@@ -89,14 +81,15 @@ def user_auth():
     pwd = pwd_area.get("1.0", "end-1c")
     print(pwd)
 
-    if username in users.auth_users:
-        print("ok")
-        if pwd == users.auth_users.get(username):
+    with shelve.open("users") as db:
+        if username in db:
             print("ok")
+            if pwd == db[username]:
+                print("ok")
+            else:
+                print("wrong pwd")
         else:
-            print("wrong pwd")
-    else:
-        print("wrong username")
+            print("wrong username")
 
 def user_ask():
     new_win = Toplevel()
@@ -106,21 +99,21 @@ def user_ask():
 
     newuser_label = Label(new_win,
                        text = "Username: ",
-                       font = ("Lucida Fax", int(w/38)))
+                       font = ("Tahoma", int(w/38)))
     newuser_label.place(x = int(w/80), y = int(h/6))
     newuser_area = Text(new_win,
                      height = 1,
                      width = int(w/180),
-                    font = ("Lucida Fax", int(w/38)))
+                    font = ("Tahoma", int(w/38)))
     newuser_area.place(x = int (w/4.8), y = int(h/6))
     newpwd_label = Label(new_win,
                        text = "Password: ",
-                       font = ("Lucida Fax", int(w/38)))
+                       font = ("Tahoma", int(w/38)))
     newpwd_label.place(x = int(w/80), y = int(h/3))
     newpwd_area = Text(new_win,
                     height = 1,
                     width = int(w/180),
-                    font = ("Lucida Fax", int(w/38)))
+                    font = ("Tahoma", int(w/38)))
     newpwd_area.place(x = int (w/4.8), y = int(h/3))
 
     bt1 = Button(new_win,
@@ -133,14 +126,10 @@ def user_ask():
 def user_add():
     username = newuser_area.get("1.0", "end-1c")
     pwd = newpwd_area.get("1.0", "end-1c")
-    print(users.auth_users)
 
-    if username or pwd not in users.auth_users:
-        key = username
-        value = pwd
-        users.auth_users.update({key: value})
-
-    print(users.auth_users)
+    with shelve.open("users") as db:
+        db[username] = pwd
+        print(dict(db))
 
 if __name__ == "__main__":
     main()
