@@ -83,15 +83,25 @@ def user_auth():
 
     with shelve.open("users") as db:
         if username in db:
-            print("ok")
             if pwd == db[username]:
                 print("ok")
             else:
-                print("wrong pwd")
+                new_win = Toplevel()
+                new_win.geometry("%dx%d+%d+%d" % (w/2.5, h/11, w/3.2, h/2.5))
+                lb = Label(new_win,
+                       text = "Wrong Password. Try Again.",
+                       font = ("Tahoma", int(w/50)))
+                lb.place(x = int(w/70), y = int(h/100))
         else:
-            print("wrong username")
+                new_win = Toplevel()
+                new_win.geometry("%dx%d+%d+%d" % (w/2.5, h/11, w/3.2, h/2.5))
+                lb = Label(new_win,
+                       text = "Wrong Username. Try Again.",
+                       font = ("Tahoma", int(w/50)))
+                lb.place(x = int(w/70), y = int(h/100))
 
 def user_ask():
+    global new_win
     new_win = Toplevel()
     new_win.geometry("%dx%d+%d+%d" % (w/2.5, h/1.5, w/3.2, h/6))
     global newuser_area
@@ -128,8 +138,21 @@ def user_add():
     pwd = newpwd_area.get("1.0", "end-1c")
 
     with shelve.open("users") as db:
-        db[username] = pwd
-        print(dict(db))
+        if username not in db:
+            db[username] = pwd
+            confirm_win = Toplevel()
+            confirm_win.geometry("%dx%d+%d+%d" % (w/2.5, h/11, w/3.2, h/2.5))
+            lb = Label(confirm_win,
+                    text = "User added. Please sign in.",
+                    font = ("Tahoma", int(w/50)))
+            lb.place(x = int(w/70), y = int(h/100))
+        else:
+            error_win = Toplevel()
+            error_win.geometry("%dx%d+%d+%d" % (w/2.5, h/11, w/3.2, h/2.5))
+            lb = Label(error_win,
+                    text = "That User Already Exists.",
+                    font = ("Tahoma", int(w/50)))
+            lb.place(x = int(w/70), y = int(h/100))
 
 if __name__ == "__main__":
     main()
