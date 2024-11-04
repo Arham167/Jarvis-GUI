@@ -46,45 +46,47 @@ canvas.create_image(1, 1, anchor = NW, image = img)
 def main():
     global user_area
     global pwd_area
+    global signin_bt
+    global signup_bt
+
     canvas.create_text(w/1.95, h/5, 
                        text = "Enter Username & Password", 
                        font = ("Tahoma", int(w/38)),
-                       fill = "white")
+                       fill = "white",
+                       tag = "first_win")
     user_area = Text(canvas,
                      height = 1,
                      width = int(w/70),
                     font = ("Tahoma", int(w/38)))
     user_area.place(x = int (w/3.2), y = int(h/3))
-    pwd_area = Text(canvas,
+    pwd_area = Text(canvas, 
                     height = 1,
                     width = int(w/70),
                     font = ("Tahoma", int(w/38)))
     pwd_area.place(x = int (w/3.2), y = int(h/2))
-    bt1 = Button(canvas,
+    signin_bt = Button(canvas,
                  text = "Sign In",
                  font = ("Arial Greek", int(w/80)),
                  cursor = "mouse",
                  command = user_auth)
-    bt1.place(x = int (w/3.2), y = int(h/1.5))
-    bt2 = Button(canvas,
+    signin_bt.place(x = int (w/3.2), y = int(h/1.5))
+    signup_bt = Button(canvas,
                  text = "New? Sign Up",
                  font = ("Arial Greek", int(w/80)),
                  cursor = "mouse",
                  command = user_ask)
-    bt2.place(x = int (w/1.7), y = int(h/1.5))
+    signup_bt.place(x = int (w/1.7), y = int(h/1.5))
     
     root.mainloop()
 
 def user_auth():
     username = user_area.get("1.0", "end-1c")
-    print(username)
     pwd = pwd_area.get("1.0", "end-1c")
-    print(pwd)
 
     with shelve.open("users") as db:
         if username in db:
             if pwd == db[username]:
-                print("ok")
+                second_win()
             else:
                 new_win = Toplevel()
                 new_win.geometry("%dx%d+%d+%d" % (w/2.5, h/11, w/3.2, h/2.5))
@@ -153,6 +155,13 @@ def user_add():
                     text = "That User Already Exists.",
                     font = ("Tahoma", int(w/50)))
             lb.place(x = int(w/70), y = int(h/100))
+
+def second_win():
+    canvas.delete("first_win")
+    user_area.destroy()
+    pwd_area.destroy()
+    signin_bt.destroy()
+    signup_bt.destroy()
 
 if __name__ == "__main__":
     main()
