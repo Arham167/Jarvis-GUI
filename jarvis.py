@@ -66,13 +66,13 @@ def main():
     pwd_area.place(x = int (w/3.2), y = int(h/2))
     signin_bt = Button(canvas,
                  text = "Sign In",
-                 font = ("Arial Greek", int(w/80)),
+                 font = ("Tahoma", int(w/80)),
                  cursor = "mouse",
                  command = user_auth)
     signin_bt.place(x = int (w/3.2), y = int(h/1.5))
     signup_bt = Button(canvas,
                  text = "New? Sign Up",
-                 font = ("Arial Greek", int(w/80)),
+                 font = ("TahomaS", int(w/80)),
                  cursor = "mouse",
                  command = user_ask)
     signup_bt.place(x = int (w/1.7), y = int(h/1.5))
@@ -103,11 +103,11 @@ def user_auth():
                 lb.place(x = int(w/70), y = int(h/100))
 
 def user_ask():
-    global new_win
-    new_win = Toplevel()
+    new_win = Toplevel(root)
     new_win.geometry("%dx%d+%d+%d" % (w/2.5, h/1.5, w/3.2, h/6))
-    global newuser_area
-    global newpwd_area
+    new_win.transient(root)
+    new_win.grab_set()
+    new_win.focus_set()
 
     newuser_label = Label(new_win,
                        text = "Username: ",
@@ -132,30 +132,32 @@ def user_ask():
                  text = "Enter",
                  font = ("Arial Greek", int(w/80)),
                  cursor = "mouse",
-                 command = user_add)
+                 command = partial(user_add, newuser_area, newpwd_area))
     bt1.place(x = int (w/6), y = int(h/2))
 
-def user_add():
+def user_add(newuser_area, newpwd_area):
     username = newuser_area.get("1.0", "end-1c")
     pwd = newpwd_area.get("1.0", "end-1c")
 
     with shelve.open("users") as db:
         if username not in db:
             db[username] = pwd
-            confirm_win = Toplevel()
-            confirm_win.geometry("%dx%d+%d+%d" % (w/2.5, h/11, w/3.2, h/2.5))
-            lb = Label(confirm_win,
-                    text = "User added. Please sign in.",
-                    font = ("Tahoma", int(w/50)))
-            lb.place(x = int(w/70), y = int(h/100))
+            message("User added. Please sign in.")
         else:
-            error_win = Toplevel()
-            error_win.geometry("%dx%d+%d+%d" % (w/2.5, h/11, w/3.2, h/2.5))
-            lb = Label(error_win,
-                    text = "That User Already Exists.",
-                    font = ("Tahoma", int(w/50)))
-            lb.place(x = int(w/70), y = int(h/100))
+            message("That user already exists.")
 
+def message(msg):
+    msg_win = Toplevel(root)
+    msg_win.geometry("%dx%d+%d+%d" % (w/2.5, h/11, w/3.2, h/2.5))
+    msg_win.transient(root)
+    msg_win.grab_set()
+    msg_win.focus_set()
+
+    lb = Label(msg_win,
+                text = msg,
+                font = ("Tahoma", int(w/50)))
+    lb.place(x = int(w/70), y = int(h/100))
+    
 def second_win():
     canvas.delete("first_win")
     user_area.destroy()
