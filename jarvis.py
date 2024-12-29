@@ -35,19 +35,19 @@ closebutton = Button(title_bar,
                      command= root.quit)
 closebutton.place(x = int(w/1.03), y = int(w/270))
 
-
 # Open the image, resize it and display it
 current_dir = os.path.dirname(__file__)
 image_path = os.path.join(current_dir, "assets", "bg.jpg")
 image = Image.open(image_path)
 resized = image.resize((w, h), PIL.Image.Resampling.LANCZOS)
 img = ImageTk.PhotoImage(resized)
-
-
-
 canvas = Canvas(root, width = w, height = h) 
 canvas.pack(side = "bottom") 
 canvas.create_image(1, 1, anchor = NW, image = img)
+
+# Specify the path for the username and password databases and functions
+base_path = r"D:/Coding/python-projects/jarvis/users"
+user_path = os.path.join(base_path, "users")
 
 def main():
     # global variables to destroy them later in the program
@@ -93,7 +93,7 @@ def user_auth():
     username = user_area.get("1.0", "end-1c")               # getting the username as text from the input
     pwd = pwd_area.get("1.0", "end-1c")                     # getting the password as text from the input
 
-    with shelve.open("users") as db:                        # opening the database of all users and passwords
+    with shelve.open(user_path) as db:                        # opening the database of all users and passwords
         if username in db:
             if pwd == db[username]:
                 second_win()                                # opening the main window if the username and password match
@@ -153,7 +153,7 @@ def user_add(newuser_area, newpwd_area):
     username = newuser_area.get("1.0", "end-1c")            # getting username as text from input
     pwd = newpwd_area.get("1.0", "end-1c")                  # getting password as text from input
 
-    with shelve.open("users") as db:                        # opening the database of all users
+    with shelve.open(user_path) as db:                        # opening the database of all users
         if username not in db:
             db[username] = pwd                              # if user does not already exist, add the                                                         
             message("User added. Please sign in.")          # username as key and password as value
