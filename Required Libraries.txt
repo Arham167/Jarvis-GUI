@@ -1,4 +1,0 @@
-Pillow (for image manipulation)
-requests (to send requests to web browser)
-tkinter 
-shelve (for username and password management)

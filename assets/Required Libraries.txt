@@ -1,0 +1,5 @@
+Pillow (for image manipulation)
+os (to access the image for the background)
+shelve (for username and password management)
+tkinter (for the gui build)
+pyttsx3 (for the voice functions)
