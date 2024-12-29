@@ -1,7 +1,6 @@
-import PIL, requests, shelve, pyttsx3
+import PIL, shelve, pyttsx3, os
 from tkinter import *
 from PIL import ImageTk, Image
-from io import BytesIO
 from functools import partial
 
 # initialize the speaking engine
@@ -38,11 +37,13 @@ closebutton.place(x = int(w/1.03), y = int(w/270))
 
 
 # Open the image, resize it and display it
-image_url = "https://i.pinimg.com/originals/90/e1/c2/90e1c21fa935d4f507dbb6cd1ebc8ef5.jpg"
-data = requests.get(image_url)
-image = Image.open(BytesIO(data.content))
+current_dir = os.path.dirname(__file__)
+image_path = os.path.join(current_dir, "assets", "bg.jpg")
+image = Image.open(image_path)
 resized = image.resize((w, h), PIL.Image.Resampling.LANCZOS)
 img = ImageTk.PhotoImage(resized)
+
+
 
 canvas = Canvas(root, width = w, height = h) 
 canvas.pack(side = "bottom") 
